@@ -25,5 +25,12 @@ Object* ObjectFactory::CreateObj(vector<int> _binary)
 	return Obj;
 }
 
+Object* ObjectFactory::CreateNearObj(Object* _obj, int _ind)
+{
+	vector<int> binary = _obj->GetBinary();
+	binary[_ind] = binary[_ind] == 0 ? 1 : 0;
+	return CreateObj(binary);	
+}
+
 
 

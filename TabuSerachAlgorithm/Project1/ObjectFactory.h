@@ -12,5 +12,6 @@ public:
 	static Object* CreateObj(int _cand);
 	static Object* CreateObj(vector<int> _binary);
 
+	static Object* CreateNearObj(Object* _obj, int _ind);
 };
 
