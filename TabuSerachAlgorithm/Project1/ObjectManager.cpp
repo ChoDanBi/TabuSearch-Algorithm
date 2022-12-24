@@ -75,7 +75,7 @@ Object* ObjectManager::GetBestBFitObj()
 			if ((*it)->GetFit() == (*iter)->GetFit()){
 				none = false; break; }
 		}
-		if (none)return (*it);
+		if (none) return (*it);
 	}
 	return nullptr;
 }
@@ -94,12 +94,13 @@ void ObjectManager::SortMoveList(){
 
 void ObjectManager::ReleaseMoveList(){
 	cout << "ReleaseMoveList()\n";
-	while (MoveList.size() > 1){
-		delete MoveList.back();
-		MoveList.back() = nullptr;
+	while (!MoveList.empty()){
+		if (MoveList.back()->GetCand() != curObj->GetCand()) {
+			delete MoveList.back();
+			MoveList.back() = nullptr;
+		}
 		MoveList.pop_back();
 	}
-	MoveList.clear();
 }
 
 void ObjectManager::ShowMoveList()

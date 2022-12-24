@@ -3,12 +3,7 @@
 
 int main() {
 	ObjectManager::GetInstance()->Init(20, 7, 0, 127);
-	//ObjectManager::GetInstance()->Move(5);
-	ObjectManager::GetInstance()->Move();
-	ObjectManager::GetInstance()->Move();
-	ObjectManager::GetInstance()->Move();
-	ObjectManager::GetInstance()->Move();
-	ObjectManager::GetInstance()->Move();
+	ObjectManager::GetInstance()->Move(5);
 
 	return 0;
 }
