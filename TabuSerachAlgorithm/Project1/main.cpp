@@ -3,6 +3,8 @@
 #include <time.h>
 
 int main() {
+	cout << "*****TabuAlgorithm*****\n";
+
 	clock_t start, finish;
 	double duration;
 	start = clock();
