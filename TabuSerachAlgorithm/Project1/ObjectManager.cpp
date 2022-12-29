@@ -7,81 +7,96 @@ void ObjectManager::Init(int _size, int _length, int _x)
 {
 	lSize = _size;
 	bLength = _length;
+
 	curObj = ObjectFactory::CreateObj(_x);
+	SetBestObj(curObj);
+
 	TabuList.push_back(curObj);
-	cout << "초기값: " << curObj->GetCand() << endl;
+
+	cout << "초기값: "; curObj->show(); cout << endl;
 }
 
 void ObjectManager::Init(int _size, int _length, int _min, int _max)
 {
 	lSize = _size;
 	bLength = _length;
+
 	int x = ObjectFactory::GetRandom(_min, _max);
 	curObj = ObjectFactory::CreateObj(x);
+	SetBestObj(curObj);
+
 	TabuList.push_back(curObj);
-	cout << "초기값: " << curObj->GetCand() << endl;
+
+	cout << "초기값: "; curObj->show(); cout << endl;
 }
 
 void ObjectManager::Move()
 {
-	cout << "Move()\n";
-	SetNearObjMoveList();
+	CreateNearObj();
 	SetNextcurObj();
+	cmpBestObj();
+
 	ReleaseMoveList();
 }
 
 void ObjectManager::Move(int _goal)
 {
-	for (int i = 1;; ++i) {
+	while (true)
+	{
 		if (curObj == nullptr) break;
-
-		cout << i << "번째: ";
 		Move();
-
-		int cnt = SetCntList(curObj);
-		if (cnt >= _goal) {
-			cout << "최종: " << curObj->GetCand() << endl;
-			break;
-		}
+		if (BestCnt >= _goal)
+			break;		
 	}
+	cout << "최종: "; BestObj->show(); cout << endl;
 }
 
 void ObjectManager::SetNextcurObj()
 {
-	cout << "SetNextcurObj()\n";
-	Object* obj = GetBestBFitObj();
+	Object* obj = GetNextObj();
 
 	if (obj == nullptr) {
 		cout << "막혔습니다!\n";
+		SetcurObj(nullptr);
 		return;
-	}
-	
+	}	
 	SetcurObj(obj);
 	PushTabuList(obj);
-	cout << curObj->GetCand() << endl;
+}
+
+void ObjectManager::SetBestObj(Object* obj)
+{
+	if (!CheckTabu(obj) && BestObj != nullptr) delete BestObj;
+	BestObj = obj;
+	BestCnt = 0;
+}
+
+int ObjectManager::cmpBestObj()
+{
+	if (GetBestObjFit() < GetcurObjFit())
+		SetBestObj(curObj);
+	else BestCnt++;
+
+	cout << "현재 베스트 값: " << GetBestObjCand() <<
+		", 카운팅: " << BestCnt << endl;
+
+	return BestCnt;
 }
 
 void ObjectManager::SetMoveList(Object* obj) { MoveList.push_back(obj); }
 Object* ObjectManager::GetMoveList(int _ind){return MoveList[_ind];}
-Object* ObjectManager::GetBestBFitObj()
+Object* ObjectManager::GetNextObj()
 {
 	SortMoveList();
-	ShowMoveList();
 	for (vector<Object*>::iterator it = MoveList.begin();
-		it != MoveList.end(); ++it) {
-		bool none = true;
-		for (list<Object*>::iterator iter = TabuList.begin();
-			iter != TabuList.end(); ++iter) {
-			if ((*it)->GetFit() == (*iter)->GetFit()){
-				none = false; break; }
-		}
-		if (none) return (*it);
+		it != MoveList.end(); ++it)
+	{
+		if (!CheckTabu(*it)) return *it;
 	}
 	return nullptr;
 }
-void ObjectManager::SetNearObjMoveList()
+void ObjectManager::CreateNearObj()
 {
-	cout << "NearObjMoveList()\n";
 	for (int i = 0; i < bLength; ++i) {
 		SetMoveList(
 			ObjectFactory::CreateNearObj(curObj, i)
@@ -93,12 +108,17 @@ void ObjectManager::SortMoveList(){
 }
 
 void ObjectManager::ReleaseMoveList(){
-	cout << "ReleaseMoveList()\n";
 	while (!MoveList.empty()){
-		if (MoveList.back()->GetCand() != curObj->GetCand()) {
-			delete MoveList.back();
-			MoveList.back() = nullptr;
+
+		if (MoveList.back()->GetCand() == GetcurObjCand()
+			|| MoveList.back()->GetCand() == GetcurObjCand())
+		{
+			MoveList.pop_back();
+			continue;
 		}
+
+		delete MoveList.back();
+		MoveList.back() = nullptr;
 		MoveList.pop_back();
 	}
 }
@@ -115,9 +135,20 @@ void ObjectManager::ShowMoveList()
 
 
 void ObjectManager::PushTabuList(Object* obj){
-	cout << "PushTabuList()\n";
 	TabuList.push_back(obj);
 	if (CheckListSize()) PopList();
+}
+
+bool ObjectManager::CheckTabu(Object* obj)
+{
+	int cand = obj->GetCand();
+	for (list<Object*>::iterator iter = TabuList.begin();
+		iter != TabuList.end(); ++iter) {
+
+		if (cand == (*iter)->GetCand())
+			return true;
+	}
+	return false;
 }
 
 bool ObjectManager::CheckListSize() { return TabuList.size() > lSize; }
@@ -125,16 +156,19 @@ bool ObjectManager::CheckListSize() { return TabuList.size() > lSize; }
 void ObjectManager::PopList()
 {
 	if (TabuList.empty()) return;
-	cout << "PopList()\n";
+
+	if (TabuList.front()->GetCand() == GetBestObjFit())
+	{
+		TabuList.pop_front(); return;
+	}
+
 	delete TabuList.front();
 	TabuList.front() = nullptr;
 	TabuList.pop_front();
 }
 
-void ObjectManager::Release() {
-	cout << "Release()\n";
-	while (!TabuList.empty())
-		PopList();
+void ObjectManager::TabuRelease() {
+	while (!TabuList.empty())PopList();
 }
 
 void ObjectManager::ShowTabuList()
@@ -146,16 +180,3 @@ void ObjectManager::ShowTabuList()
 	}
 }
 
-int ObjectManager::SetCntList(Object* _obj)
-{
-	return SetCntList(_obj->GetCand());
-}
-
-int ObjectManager::SetCntList(int _cand)
-{
-	if (CntList.find(_cand) == CntList.end())
-		CntList.insert(make_pair(_cand, 0));
-	CntList[_cand]++;
-	
-	return CntList[_cand];
-}

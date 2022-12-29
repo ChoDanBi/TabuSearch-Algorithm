@@ -40,6 +40,10 @@ public:
 	static bool cmp(const Object* o1, const Object* o2) {
 		return o1->Fit > o2->Fit; }
 
+	static bool mcmp(const pair<int, int>& a, const pair<int, int>& b) {
+		return a.second > b.second;
+	}
+
 private:
 	//ÇÔ¼ö
 	int f(int x) { return (80 + (38 * x) - (x * x)); }
