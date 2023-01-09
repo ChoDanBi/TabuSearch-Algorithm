@@ -5,11 +5,19 @@
 #include <vector>
 #include <list>
 
-#include <algorithm>
 
-#define TABU TabuSerach::GetInstance()
-#define NM NodeManager::GetInstance()
 #define NF NodeFactory
 #define DEL NodeFactory::SafeDelet
+
+#define NM NodeManager::GetInstance()
+#define CUR NodeManager::GetInstance()->GetcNode()
+#define BEST NodeManager::GetInstance()->GetbNode()
+#define MOVE NodeManager::GetInstance()->GetMoveList()
+#define TABU NodeManager::GetInstance()->GetTabuList()
+
+#define TB TabuSerach::GetInstance()
+
+#define IT ::iterator
+
 
 using namespace std;

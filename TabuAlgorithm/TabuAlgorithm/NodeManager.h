@@ -1,6 +1,7 @@
 #pragma once
 #include "Node.h"
 #include "NodeFactory.h"
+#include <algorithm>
 
 class Node;
 class NodeManager
@@ -15,11 +16,9 @@ public:
 	}
 
 private:
-	int Scale;
-	int Range;
-
-	int Count;
-	int Size;
+	int Scale;	//TabuSize
+	int Range;	//0~Max(Range)
+	int Size;	//Binary text length
 
 	Node* curNode;
 	Node* BestNode;
@@ -38,8 +37,6 @@ public:	//Get&Set
 	int GetRange() { return Range; }
 	void SetRange(int _range) { Range = _range; }
 
-	int GetCount() { return Count; }
-
 	int GetSize() { return Size; }
 	void SetSize() { Size = 1; while (Range > pow(2, Size)) ++Size; }
 
@@ -50,18 +47,34 @@ public: //Node
 	void SetcNode(Node* _node) { curNode = _node; }
 	void SetbNode(Node* _node) { BestNode = _node; }
 
-	void DelcNode() { DEL(curNode); }
-	void DelbNode() { DEL(BestNode); }
+	void DelCurNode();
+	void DelCurNode(bool _isExist);
+
+	void DelBestNode();
+	void DelBestNode(bool _isExist);
 
 public:	//List
 	vector<Node*>* GetMoveList() { return &MoveList; }
 	list<Node*>* GetTabuList() { return &TabuList; }
 
-	void SetMoveList(Node* _node) { MoveList.push_back(_node); }
-	void SetTabuList(Node* _node) { TabuList.push_back(_node); }
+	void addMove(Node* _node) { MoveList.push_back(_node); }
+	void addTabu(Node* _node) { TabuList.push_back(_node); }
+
+	int GetMoveScale() { return MoveList.size(); }
+	int GetTabuScale() { return TabuList.size(); }
+
+	void SortMove() { sort(MoveList.begin(), MoveList.end(), Node::cmp); }
+
+	bool isContainTabu(Node* _node);
+
+	void PopTabu();
+	void PopTabu(bool _isExist);
+
+	void ReleaseMove();
+	void ReleaseTabu();
 
 private:
-	NodeManager() : Scale(0), Range(0), Count(0), Size(1),
+	NodeManager() : Scale(0), Range(0), Size(1),
 		curNode(nullptr), BestNode(nullptr), MoveList(NULL), TabuList(NULL) {};
 public:
 	~NodeManager() {};
