@@ -15,6 +15,7 @@ public:
 
 private:
 	int Count;
+	bool isBlock;
 
 public:	//Init
 	void Init(int _scale, int _range);
@@ -22,7 +23,7 @@ public:	//Init
 
 public:	//TabuSerach
 	void Start(int _goal);
-	void Finish(bool _isgoal);
+	void Finish(bool _isblock);
 	int Simulating();
 
 public:	//function

@@ -7,7 +7,7 @@ void NodeManager::Init(int _scale, int _range)
 	Scale = _scale;
 	Range = _range;
 	SetSize();
-	curNode = NF::CreateNode(NF::GetRandom(Range, Size));
+	curNode = NF::CreateNode(NF::GetRandom(Range));
 	BestNode = curNode;
 }
 

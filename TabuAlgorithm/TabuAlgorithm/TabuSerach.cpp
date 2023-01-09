@@ -5,21 +5,31 @@ TabuSerach* TabuSerach::Instance = NULL;
 
 void TabuSerach::Init(int _scale, int _range)
 {
-	Count = 0; NM->Init(_scale, _range);
+	Count = 0;
+	isBlock = false;
+	NM->Init(_scale, _range);
 }
 
 void TabuSerach::Init(int _scale, int _range, int _num)
 {
-	Count = 0; NM->Init(_scale, _range, _num);
+	Count = 0;
+	isBlock = false;
+	NM->Init(_scale, _range, _num);
 }
 
 void TabuSerach::Start(int _goal)
 {
+	while (!isBlock)
+	{
+		if (_goal <= Simulating())
+			break;
+	}
+	Finish(isBlock);
 }
 
-void TabuSerach::Finish(bool _isgoal)
+void TabuSerach::Finish(bool _isblock)
 {
-	if (!_isgoal)
+	if (_isblock)
 		cout << "¡ØBreak!\n";
 	cout << "Final Num: "; BEST->Show();
 }
@@ -28,7 +38,12 @@ int TabuSerach::Simulating()
 {
 	NeighborSearch();
 	NM->SortMove();
-	isEdgeContain();
+
+	if (isEdgeContain()) {
+		isBlock = true;
+		return 0;
+	}
+
 	NM->ReleaseMove();
 	AddEdgeinTabu();
 	return CompareEdge();
@@ -52,7 +67,6 @@ bool TabuSerach::isEdgeContain()
 		MOVE->erase(i);
 		return false;
 	}
-	Finish(false);
 	return true;
 }
 
@@ -65,8 +79,7 @@ void TabuSerach::AddEdgeinTabu()
 		int num = TABU->front()->GetNum();
 		NM->PopTabu(
 			(num == CUR->GetNum() || num == BEST->GetNum())
-			? true : false
-		);
+			? true : false);
 	}
 }
 
