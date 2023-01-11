@@ -4,16 +4,14 @@
 Node* NodeFactory::CreateNearNode(Node* _node, const int& _ind)
 {
 	vector<int> Binary = _node->GetBinary();
-	int ind = GetRandom((Binary.size() - 1));
-	Binary[ind] = Binary[ind] == 0 ? 1 : 0;
+	Binary[_ind] = Binary[_ind] == 0 ? 1 : 0;
 	return new Node(Binary);
 }
 
 Node* NodeFactory::CreateNearNode(Node* _node, const int& _ind, const int& _size)
 {
 	vector<int> Binary = _node->GetBinary();
-	int ind = GetRandom((Binary.size() - 1));
-	Binary[ind] = Binary[ind] == 0 ? 1 : 0;
+	Binary[_ind] = Binary[_ind] == 0 ? 1 : 0;
 	return new Node(Binary, _size);
 }
 

@@ -24,14 +24,15 @@ public:	//Init
 public:	//TabuSerach
 	void Start(int _goal);
 	void Finish(bool _isblock);
-	int Simulating();
+	void Simulating();
 
 public:	//function
 	void NeighborSearch();
 	bool isEdgeContain();
 	void AddEdgeinTabu();
-	int CompareEdge();
+	void CompareEdge();
 
+	void ShowNode(Node* _node);
 
 private:
 	TabuSerach() :Count(0) {};

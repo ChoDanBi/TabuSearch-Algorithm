@@ -14,7 +14,7 @@ int main(void) {
 
 	
 	TB->Init(10, 31);
-	TB->Start(5);
+	TB->Start(10);
 
 
 	//==========================

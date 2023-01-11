@@ -44,8 +44,8 @@ public: //Node
 	Node* GetcNode() { return curNode; }
 	Node* GetbNode() { return BestNode; }
 
-	void SetcNode(Node* _node) { curNode = _node; }
-	void SetbNode(Node* _node) { BestNode = _node; }
+	void SetcurNode(Node* _node) { curNode = _node; }
+	void SetbestNode(Node* _node) { BestNode = _node; }
 
 	void DelCurNode();
 	void DelCurNode(bool _isExist);

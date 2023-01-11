@@ -7,7 +7,7 @@ void NodeManager::Init(int _scale, int _range)
 	Scale = _scale;
 	Range = _range;
 	SetSize();
-	curNode = NF::CreateNode(NF::GetRandom(Range));
+	curNode = NF::CreateNode(NF::GetRandom(Range), Size);
 	BestNode = curNode;
 }
 
@@ -32,7 +32,7 @@ void NodeManager::DelBestNode() { DEL(BestNode); }
 
 void NodeManager::DelBestNode(bool _isExist)
 {
-	if (!_isExist) delete curNode;
+	if (!_isExist) delete BestNode;
 	BestNode = nullptr;
 }
 

@@ -21,7 +21,8 @@ void TabuSerach::Start(int _goal)
 {
 	while (!isBlock)
 	{
-		if (_goal <= Simulating())
+		Simulating();
+		if (_goal <= Count)
 			break;
 	}
 	Finish(isBlock);
@@ -31,43 +32,50 @@ void TabuSerach::Finish(bool _isblock)
 {
 	if (_isblock)
 		cout << "¡ØBreak!\n";
-	cout << "Final Num: "; BEST->Show();
+	cout << "Final "; BEST->Show();
 }
 
-int TabuSerach::Simulating()
+void TabuSerach::Simulating()
 {
 	NeighborSearch();
 	NM->SortMove();
 
 	if (isEdgeContain()) {
 		isBlock = true;
-		return 0;
+		return;
 	}
 
 	NM->ReleaseMove();
 	AddEdgeinTabu();
-	return CompareEdge();
+	CompareEdge();
 }
 
 void TabuSerach::NeighborSearch()
 {
-	int size = NM->GetSize();
-	for (int i = 0; i < size; ++i)
+	cout << "Current "; ShowNode(CUR);
+
+	int size = CUR->GetBinary().size();
+	for (int i = 0; i < size; ++i) {
 		NM->addMove(NF::CreateNearNode(
-			NM->GetcNode(), i, size));
+			CUR, i, size));
+
+		cout << "Create Neighbor "; ShowNode(MOVE->back());
+	}
 }
 
 bool TabuSerach::isEdgeContain()
 {
+	bool isContain = true;
 	for (vector<Node*>IT i = MOVE->begin();
 		i != MOVE->end(); ++i) {
 		if (NM->isContainTabu(*i)) continue;
 
-		NM->SetcNode(*i);
+		NM->SetcurNode(*i);
 		MOVE->erase(i);
-		return false;
+
+		isContain = false; break;
 	}
-	return true;
+	return isContain;
 }
 
 void TabuSerach::AddEdgeinTabu()
@@ -83,13 +91,17 @@ void TabuSerach::AddEdgeinTabu()
 	}
 }
 
-int TabuSerach::CompareEdge()
+void TabuSerach::CompareEdge()
 {
-	if (CUR > BEST) {
+	if (CUR->GetFit() > BEST->GetFit()) {
 		NM->DelBestNode(NM->isContainTabu(BEST));
-		NM->SetbNode(CUR);
+		NM->SetbestNode(CUR);
 		Count = 0;
 	}
 	else Count++;
-	return Count;
+
+	cout << "\n Best "; ShowNode(BEST);
+	cout << "Count: " << Count << "\n\n";
 }
+
+void TabuSerach::ShowNode(Node* _node){cout << "Node "; _node->Show();}
